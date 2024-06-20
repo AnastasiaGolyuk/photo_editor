@@ -1,4 +1,7 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:photo_editor/screens/image_editing_screen/image_editing_screen.dart';
 
 class ImageLoadingScreen extends StatefulWidget {
   const ImageLoadingScreen({super.key, required this.title});
@@ -11,6 +14,27 @@ class ImageLoadingScreen extends StatefulWidget {
 
 class _ImageLoadingScreenState extends State<ImageLoadingScreen> {
   String _url = '';
+  Uint8List _imageBytes = Uint8List(0);
+  bool _isLoading = false;
+  final TextEditingController inputController = TextEditingController();
+
+  @override
+  void dispose() {
+    inputController.dispose();
+    super.dispose();
+  }
+
+  void _setImageBytes(Uint8List bytes) {
+    setState(() {
+      _imageBytes = bytes;
+    });
+  }
+
+  void _setIsLoading(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
 
   void _setUrl(String url) {
     setState(() {
@@ -18,12 +42,58 @@ class _ImageLoadingScreenState extends State<ImageLoadingScreen> {
     });
   }
 
-  final inputController = TextEditingController();
+  Future<void> _fetchImageBytes() async {
+    _setIsLoading(true);
+    try {
+      final http.Response response = await http.get(Uri.parse(_url));
+      if (response.statusCode == 200) {
+        _setImageBytes(response.bodyBytes);
+        _navigateNext();
+      } else {
+        _showError('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      _showError('Error fetching image: $e');
+    } finally {
+      _setIsLoading(false);
+    }
+  }
 
-  @override
-  void dispose() {
-    inputController.dispose();
-    super.dispose();
+  void _navigateNext() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ImageEditingScreen(
+          title: 'Photo Editor - Edit Image',
+          imageBytes: _imageBytes,
+        ),
+      ),
+    );
+  }
+
+  void _fetchImage(String url) {
+    _setUrl(url);
+    _fetchImageBytes();
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -47,30 +117,20 @@ class _ImageLoadingScreenState extends State<ImageLoadingScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  _setUrl(inputController.text);
+                  _fetchImage(inputController.text);
                 },
                 child: const Text('Download'),
               ),
-              if (_url.isNotEmpty)
+              if (_isLoading)
                 SizedBox(
                   height: 300,
-                  child: Image.network(
-                    _url,
-                    fit: BoxFit.fitHeight,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
+                  child: Center(
+                    child: Column(children: const <Widget>[
+                      CircularProgressIndicator(),
+                      Text('Loading image from given URL...')
+                    ]),
                   ),
-                )
+                ),
             ],
           ),
         ),
