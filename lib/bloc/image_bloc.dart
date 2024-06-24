@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:equatable/equatable.dart';
 import 'package:image/image.dart' as img;
+import 'package:photo_editor/services/shared_preferences_service.dart';
 
 part 'image_event.dart';
 
@@ -17,6 +18,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
     on<LoadImageEvent>(_onLoadImage);
     on<ProcessImageEvent>(_onProcessImage);
     on<SaveImageEvent>(_onSaveImage);
+    on<ErrorDismissedEvent>(_onErrorDismissed);
   }
 
   Future<void> _onLoadImage(
@@ -27,7 +29,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
       if (response.statusCode == 200) {
         emit(ImageLoaded(response.bodyBytes));
       } else {
-        emit(ImageError('Failed to load image'));
+        emit(const ImageError('Failed to load image'));
       }
     } catch (e) {
       emit(ImageError(e.toString()));
@@ -55,17 +57,25 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   Future<void> _onSaveImage(
       SaveImageEvent event, Emitter<ImageState> emit) async {
     try {
-      final dir = await getTemporaryDirectory();
-      var filename = '${dir.path}/SaveImage.png';
+      final dir = await getApplicationDocumentsDirectory();
+      var nameByDateTime =
+          'SavedImage_${DateFormat('yyyy_MM_dd__HH_mm_ss').format(DateTime.now())}';
+      var filename = '${dir.path}/$nameByDateTime.png';
       final file = File(filename);
       await file.writeAsBytes(event.imageBytes);
-      final params = SaveFileDialogParams(sourceFilePath: file.path);
-      final finalPath = await FlutterFileDialog.saveFile(params: params);
-      if (finalPath != null) {
+      if (await SharedPreferencesService.setFilePath(
+          nameByDateTime, filename)) {
         emit(ImageSaved());
+      } else {
+        emit(const ImageError('Error while saving the image'));
       }
     } catch (e) {
       emit(ImageError(e.toString()));
     }
+  }
+
+  Future<void> _onErrorDismissed(
+      ErrorDismissedEvent event, Emitter<ImageState> emit) async {
+    emit(ImageInitial());
   }
 }

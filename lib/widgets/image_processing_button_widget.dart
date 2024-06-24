@@ -6,10 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/image_bloc.dart';
 
-class ImageProcessingWidget extends StatelessWidget {
+class ImageProcessingButtonWidget extends StatelessWidget {
   final Uint8List imageBytes;
 
-  const ImageProcessingWidget({super.key, required this.imageBytes});
+  const ImageProcessingButtonWidget({super.key, required this.imageBytes});
 
   @override
   Widget build(BuildContext context) {

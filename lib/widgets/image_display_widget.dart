@@ -9,16 +9,13 @@ class ImageDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
+    return
         SizedBox(
           height: 300,
           child: Image.memory(
             imageBytes,
             fit: BoxFit.contain,
           ),
-        ),
-      ],
     );
   }
 }

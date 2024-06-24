@@ -5,6 +5,7 @@ import 'package:photo_editor/widgets/image_loading_widget.dart';
 import 'package:photo_editor/widgets/image_processing_button_widget.dart';
 import 'package:photo_editor/widgets/image_save_button_widget.dart';
 import 'package:photo_editor/widgets/image_url_input_widget.dart';
+import 'package:photo_editor/widgets/previous_images_grid_widget.dart';
 
 import '../widgets/error_dialog_widget.dart';
 import '../widgets/image_display_widget.dart';
@@ -18,41 +19,70 @@ class PhotoEditorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ImageBloc(),
-      child: BlocBuilder<ImageBloc, ImageState>(
+      child: BlocConsumer<ImageBloc, ImageState>(
+        listener: (context, state) async {
+          if (state is ImageError) {
+            await showDialog(
+                context: context,
+                builder: (BuildContext contextDialog) {
+                  return ErrorDialogWidget(
+                    message: state.message,
+                    onClose: () {
+                      BlocProvider.of<ImageBloc>(context)
+                          .add(const ErrorDismissedEvent());
+                    },
+                  );
+                });
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
               title: Text(title),
             ),
-            body: Center(
-              child: Container(
+            body: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    if (state is ImageInitial || state is ImageSaved)
-                      const ImageUrlInputWidget(),
-                    if (state is ImageLoading)
-                      const ImageLoadingWidget(
-                        message: 'Loading image from given URL...',
-                      ),
-                    if (state is ImageLoaded || state is ImageProcessed)
-                      ImageDisplayWidget(
-                          imageBytes: (state is ImageLoaded)
-                              ? state.imageBytes
-                              : (state as ImageProcessed).imageBytes),
-                    if (state is ImageLoaded)
-                      ImageProcessingWidget(imageBytes: state.imageBytes),
-                    if (state is ImageProcessing)
-                      const ImageLoadingWidget(message: 'Processing image...'),
-                    if (state is ImageProcessed)
-                      ImageSaveButtonWidget(imageBytes: state.imageBytes),
-                    if (state is ImageError)
-                      ErrorDialogWidget(message: state.message),
-                  ],
-                ),
-              ),
-            ),
+                scrollDirection: Axis.vertical,
+                child: (state is ImageInitial || state is ImageSaved)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          ImageUrlInputWidget(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          PreviousImagesGridWidget(),
+                        ],
+                      )
+                    : (state is ImageLoading)
+                        ? const ImageLoadingWidget(
+                            message: 'Loading image from given URL...',
+                          )
+                        : (state is ImageProcessing)
+                            ? const ImageLoadingWidget(
+                                message: 'Processing image...')
+                            : (state is ImageLoaded || state is ImageProcessed)
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                        const SizedBox(
+                                          height: 50,
+                                        ),
+                                        ImageDisplayWidget(
+                                            imageBytes: (state is ImageLoaded)
+                                                ? state.imageBytes
+                                                : (state as ImageProcessed)
+                                                    .imageBytes),
+                                        (state is ImageLoaded)
+                                            ? ImageProcessingButtonWidget(
+                                                imageBytes: state.imageBytes)
+                                            : ImageSaveButtonWidget(
+                                                imageBytes:
+                                                    (state as ImageProcessed)
+                                                        .imageBytes)
+                                      ])
+                                : Container()),
           );
         },
       ),

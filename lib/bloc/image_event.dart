@@ -33,3 +33,11 @@ class SaveImageEvent extends ImageEvent {
   @override
   List<Object> get props => [imageBytes];
 }
+
+class ErrorDismissedEvent extends ImageEvent {
+
+  const ErrorDismissedEvent();
+
+  @override
+  List<Object> get props => [];
+}

@@ -30,6 +30,7 @@ class _ImageUrlInputWidgetState extends State<ImageUrlInputWidget> {
             labelText: 'Enter image URL',
           ),
         ),
+        const SizedBox(height: 10,),
         ElevatedButton(
           onPressed: () {
             final url = inputController.text;
