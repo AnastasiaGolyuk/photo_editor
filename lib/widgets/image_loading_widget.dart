@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Widget to show loading process.
 class ImageLoadingWidget extends StatelessWidget {
   final String message;
 

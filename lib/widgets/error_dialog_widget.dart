@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-
+/// Widget to display error alert dialog.
 class ErrorDialogWidget extends StatelessWidget {
   final String message;
+
+  /// Callback to complete on dialog dismiss.
   final VoidCallback onClose;
 
   const ErrorDialogWidget({

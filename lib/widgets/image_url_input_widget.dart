@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/image_bloc.dart';
 
+
+/// Widget of Text Input to input image URL and button that triggers [LoadImageEvent] on click.
 class ImageUrlInputWidget extends StatefulWidget {
   const ImageUrlInputWidget({super.key});
 

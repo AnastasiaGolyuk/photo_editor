@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:photo_editor/services/shared_preferences_service.dart';
 import 'package:photo_editor/widgets/image_display_widget.dart';
 
+/// Widget to display previously saved images
+/// or show message if no images were saved.
 class PreviousImagesGridWidget extends StatelessWidget {
   const PreviousImagesGridWidget({super.key});
 
@@ -60,6 +62,8 @@ class PreviousImagesGridWidget extends StatelessWidget {
   }
 }
 
+
+/// Widget of dialog that uses [ImageDisplayWidget] to display image preview.
 class ImageDialog extends StatelessWidget {
   const ImageDialog({super.key, required this.imageBytes});
 

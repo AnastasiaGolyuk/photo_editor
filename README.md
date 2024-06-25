@@ -1,16 +1,38 @@
-# photo_editor
+# Photo Editor
 
-A new Flutter project.
+Данное приложение позволяет загружать изображения с заданного URL, обрабатывать его (преобразовывать в оттенки серого) и сохранять в память устройства.
 
-## Getting Started
+<img src="readme_assets/app_screens.png" height="480"  alt="AppScreens"/>
 
-This project is a starting point for a Flutter application.
+## Используемые технологии
 
-A few resources to get you started if this is your first Flutter project:
+- http: Для выполнения HTTP запросов был использован пакет http.
+- image: Для обработки изображения был использован пакет image. В качестве преобразования был выбран метод grayscale(), выполняющий преобразование изображения в оттенки серого. Также использовался класс Command при обработке изображения, для создания цепочки команд и ее асинхронного выполнения.
+- SharedPreferences: Пути изображений сохраняются в SharedPreferences.
+- BLoC: Для реализации State Management был использован BLoC.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Установка
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Необходимо склонировать репозиторий используя команду:
+
+```
+git clone https://github.com/AnastasiaGolyuk/photo_editor.git
+```
+
+Далее следует перейти в директорию склонированного репозитория:
+
+```
+cd photo_editor
+```
+
+Теперь необходимо установить все зависимости. Для этого требуется выполнить следующую команду:
+
+```
+flutter pub get
+```
+
+Чтобы запустить приложение, следует убедиться, что устройство, на котором Вы хотите его запустить подключено и выполните команду:
+
+```
+flutter run lib/main.dart
+```

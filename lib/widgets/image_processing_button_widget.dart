@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/image_bloc.dart';
 
+/// Widget of button that triggers [ProcessImageEvent] on click.
 class ImageProcessingButtonWidget extends StatelessWidget {
   final Uint8List imageBytes;
 

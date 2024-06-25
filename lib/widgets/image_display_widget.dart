@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+/// Widget to display image from image bytes.
 class ImageDisplayWidget extends StatelessWidget {
   final Uint8List imageBytes;
 

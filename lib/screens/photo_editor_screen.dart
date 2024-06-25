@@ -10,6 +10,9 @@ import 'package:photo_editor/widgets/previous_images_grid_widget.dart';
 import '../widgets/error_dialog_widget.dart';
 import '../widgets/image_display_widget.dart';
 
+/// Main widget that holds BlocProvider & BlocConsumer to create
+/// [ImageBloc] instance, listen to state changes and show widgets,
+/// based on current state.
 class PhotoEditorScreen extends StatelessWidget {
   const PhotoEditorScreen({super.key, required this.title});
 
@@ -29,7 +32,7 @@ class PhotoEditorScreen extends StatelessWidget {
                     message: state.message,
                     onClose: () {
                       BlocProvider.of<ImageBloc>(context)
-                          .add(const ErrorDismissedEvent());
+                          .add(ErrorDismissedEvent());
                     },
                   );
                 });

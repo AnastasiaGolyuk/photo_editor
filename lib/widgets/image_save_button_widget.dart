@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/image_bloc.dart';
 
+/// Widget of button that triggers [SaveImageEvent] on click.
 class ImageSaveButtonWidget extends StatelessWidget {
   final Uint8List imageBytes;
 

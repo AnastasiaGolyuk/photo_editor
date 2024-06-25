@@ -1,5 +1,9 @@
 part of 'image_bloc.dart';
 
+/// Base class for image events.
+///
+/// All subclasses of [ImageEvent] must override the [props] getter to include
+/// all instance variables that should be considered in equality comparisons.
 abstract class ImageEvent extends Equatable {
   const ImageEvent();
 
@@ -7,6 +11,7 @@ abstract class ImageEvent extends Equatable {
   List<Object> get props => [];
 }
 
+/// [LoadImageEvent] - Event to load an image from a given URL.
 class LoadImageEvent extends ImageEvent {
   final String imageUrl;
 
@@ -16,6 +21,7 @@ class LoadImageEvent extends ImageEvent {
   List<Object> get props => [imageUrl];
 }
 
+/// [ProcessImageEvent] - Event to process an image with given image bytes.
 class ProcessImageEvent extends ImageEvent {
   final Uint8List imageBytes;
 
@@ -25,6 +31,7 @@ class ProcessImageEvent extends ImageEvent {
   List<Object> get props => [imageBytes];
 }
 
+/// [SaveImageEvent] - Event to save an image with given image bytes.
 class SaveImageEvent extends ImageEvent {
   final Uint8List imageBytes;
 
@@ -34,10 +41,5 @@ class SaveImageEvent extends ImageEvent {
   List<Object> get props => [imageBytes];
 }
 
-class ErrorDismissedEvent extends ImageEvent {
-
-  const ErrorDismissedEvent();
-
-  @override
-  List<Object> get props => [];
-}
+/// [ErrorDismissedEvent] - Event to change the state after error occurs.
+class ErrorDismissedEvent extends ImageEvent {}
